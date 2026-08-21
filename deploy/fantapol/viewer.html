@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07110e">
+  <title>FantaPol Live</title>
+  <link rel="icon" type="image/svg+xml" href="assets/fantapol-logo.svg">
+  <link rel="stylesheet" href="viewer.css?v=11">
+</head>
+<body>
+  <header class="live-header">
+    <div class="live-brand"><img class="live-app-logo" src="assets/fantapol-logo.svg" alt=""><div><strong>FantaPol</strong><small id="liveLeagueName">LIVE</small></div><img id="liveLeagueLogo" class="live-league-logo hidden" alt=""></div>
+    <div class="live-connection"><i id="connectionDot"></i><span id="connectionText">Connessione…</span></div>
+    <div class="live-timer"><small>TEMPO ASTA</small><strong id="liveTimer">00:00:00</strong></div>
+  </header>
+
+  <main id="liveApp" class="live-app hidden">
+    <section class="live-hero">
+      <article id="livePlayerCard" class="live-player-card role-P">
+        <div class="live-card-head"><b id="liveRole">P</b><strong id="livePreciseRole">POR</strong><span id="liveCall">1ª CHIAMATA</span></div>
+        <div class="live-portrait"><div id="liveInitials">SV</div><img id="liveImage" alt=""></div>
+        <div class="live-player-copy"><p id="liveClub">ROMA</p><h1 id="liveName">SVILAR</h1><span id="liveValues">QUOT. 18 · FVM 65</span></div>
+      </article>
+
+      <section class="live-overview">
+        <p class="live-kicker" id="livePhase">PORTIERI</p>
+        <h2 id="liveProgressTitle">0 / 0 giocatori acquistati</h2>
+        <div class="live-progress"><span id="liveProgressBar"></span></div>
+        <div class="live-numbers"><div><small>MANCANO</small><b id="liveRemaining">0</b></div><div><small>LISTONE</small><b id="liveTotal">0</b></div><div><small>CHIAMATI</small><b id="liveCalled">0</b></div></div>
+        <article class="live-previous"><p>ULTIMA CHIAMATA</p><div id="livePrevious"><span>In attesa della prima operazione</span></div></article>
+      </section>
+    </section>
+
+    <section class="live-teams-section"><div class="live-section-title"><h2>Situazione squadre</h2><span id="lastUpdate"></span></div><div id="liveTeams" class="live-teams"></div></section>
+  </main>
+
+  <section id="waitingView" class="waiting-view"><img class="waiting-logo" src="assets/fantapol-logo.svg" alt="Logo FantaPol"><p>FANTAPOL LIVE</p><h1 id="waitingTitle">In attesa dell’asta</h1><span id="waitingText">La regia non ha ancora pubblicato dati per questo link.</span></section>
+
+  <div id="livePauseOverlay" class="live-pause-overlay hidden"><div><p>ASTA IN PAUSA</p><strong id="livePauseTime">00:00:00</strong><span>La regia riprenderà a breve</span></div></div>
+  <div id="awardFlash" class="award-flash hidden"><div><small>AGGIUDICATO</small><strong id="awardPlayer">—</strong><span id="awardDetails">—</span></div></div>
+
+  <dialog id="teamRosterDialog" class="roster-dialog">
+    <div class="roster-dialog-head">
+      <div class="roster-dialog-team"><img id="rosterTeamLogo" class="hidden" alt=""><div><p>ROSA SQUADRA</p><h2 id="rosterTeamName">—</h2><span id="rosterTeamStats"></span></div></div>
+      <button id="closeRosterBtn" type="button" aria-label="Chiudi rosa">×</button>
+    </div>
+    <div id="publicRoster" class="public-roster"></div>
+  </dialog>
+  <script src="viewer.js?v=11"></script>
+</body>
+</html>

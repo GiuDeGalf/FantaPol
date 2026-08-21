@@ -1,0 +1,11 @@
+{
+  "name": "fantapol",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Regia locale e offline-first per aste di fantacalcio",
+  "scripts": {
+    "test": "node tests/engine.test.js",
+    "check": "node --check app.js && node --check auction-engine.js && node tests/engine.test.js"
+  },
+  "license": "Apache-2.0"
+}

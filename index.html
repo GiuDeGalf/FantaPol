@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07110e">
+  <title>FantaPol</title>
+  <link rel="icon" type="image/svg+xml" href="assets/fantapol-logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;0,800;0,900;1,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=16">
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <section id="welcomeView" class="welcome-view">
+    <img class="welcome-mark" src="assets/fantapol-logo.svg" alt="Logo FantaPol">
+    <p class="eyebrow">ASTA · CONTROLLO LIVE</p>
+    <h1>Fanta<span>Pol</span></h1>
+    <p class="welcome-copy">La regia dell’asta: chiamate eque, crediti sotto controllo e salvataggio automatico.</p>
+    <div class="welcome-actions">
+      <button id="resumeBtn" class="btn btn-primary hidden">Riprendi l’asta</button>
+      <button id="newAuctionBtn" class="btn btn-secondary">Nuova asta</button>
+      <button id="repairAuctionBtn" class="btn btn-secondary">Asta di riparazione</button>
+      <label class="btn btn-ghost file-label">Importa backup JSON<input id="welcomeBackupInput" type="file" accept=".json,application/json"></label>
+    </div>
+    <p id="savedAuctionInfo" class="saved-info"></p>
+  </section>
+
+  <main id="auctionView" class="auction-view hidden">
+    <header class="topbar">
+      <button id="homeBtn" class="brand-lockup" type="button" title="Torna alla schermata iniziale">
+        <img class="mini-mark" src="assets/fantapol-logo.svg" alt="">
+        <div><strong>FantaPol</strong><span id="headerLeagueName">ASTA LIVE</span></div>
+        <img id="headerLeagueLogo" class="header-league-logo hidden" alt="">
+      </button>
+      <div class="phase-wrap">
+        <div class="phase-line"><span id="phaseLabel">PORTIERI</span><span id="progressLabel">ROSE 0 / 0</span></div>
+        <div class="list-stats"><span>MANCANO <b id="remainingLabel">0</b></span><span>LISTONE <b id="totalPlayersLabel">0</b></span><span>CHIAMATI <b id="calledPlayersLabel">0</b></span></div>
+        <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+      </div>
+      <nav class="toolbar" aria-label="Azioni asta">
+        <div class="auction-timer"><small>TEMPO ASTA</small><strong id="auctionTimer">00:00:00</strong></div>
+        <button id="undoBtn" class="icon-btn" title="Annulla ultima azione (Ctrl+Z)">↶ <span>Undo</span></button>
+        <button id="rostersBtn" class="icon-btn rosters-btn">Rose <b id="rostersCount">0/0</b></button>
+        <button id="searchBtn" class="icon-btn" title="Scegli manualmente un giocatore">⌕ <span>Cerca</span></button>
+        <button id="endAuctionBtn" class="icon-btn danger-btn" title="Termina definitivamente l’asta">■ <span>Termina</span></button>
+        <button id="settingsBtn" class="icon-btn">Impostazioni</button>
+      </nav>
+    </header>
+
+    <section class="auction-stage">
+      <article id="playerCard" class="player-card role-P">
+        <div class="card-stripes" aria-hidden="true"></div>
+        <div class="card-topline">
+          <span id="playerRole" class="role-badge">P</span>
+          <strong id="playerMantraRole" class="precise-role">POR</strong>
+          <span id="callCount" class="call-count">1ª CHIAMATA</span>
+        </div>
+        <div class="portrait-wrap">
+          <div id="portraitFallback" class="portrait-fallback"><span id="portraitInitials">SV</span></div>
+          <img id="playerPortrait" alt="" referrerpolicy="no-referrer">
+          <div class="portrait-shade"></div>
+        </div>
+        <div class="player-copy">
+          <div class="player-details"><p id="playerClub" class="player-club">ROMA</p></div>
+          <h2 id="playerName">SVILAR</h2>
+          <p id="playerMeta" class="player-meta">QUOTAZIONE 18</p>
+        </div>
+        <div class="fvm-disc"><small>FVM</small><strong id="playerFvm">65</strong></div>
+      </article>
+
+      <section class="bid-panel">
+        <p class="eyebrow">SQUADRA SELEZIONATA</p>
+        <button id="selectedTeamDisplay" class="selected-team" type="button">—</button>
+        <div class="bid-row">
+          <label for="priceInput">OFFERTA</label>
+          <div class="price-control">
+            <button id="minusPriceBtn" type="button" aria-label="Diminuisci offerta">−</button>
+            <input id="priceInput" type="number" min="1" step="1" value="1" inputmode="numeric">
+            <button id="plusPriceBtn" type="button" aria-label="Aumenta offerta">+</button>
+          </div>
+          <p id="maxBidLabel" class="max-bid">Massimo — cr</p>
+        </div>
+        <div class="auction-actions">
+          <button id="skipBtn" class="btn btn-pass"><span>PASSA</span><small>Spazio</small></button>
+          <button id="buyBtn" class="btn btn-buy"><span>AGGIUDICATO</span><small>Invio</small></button>
+        </div>
+        <p id="autosaveStatus" class="autosave">● Salvataggio automatico attivo</p>
+      </section>
+
+      <aside id="previousCall" class="previous-call empty">
+        <p class="eyebrow">ULTIMA CHIAMATA</p>
+        <div class="previous-role" id="previousRole">—</div>
+        <p id="previousClub" class="previous-club">IN ATTESA</p>
+        <h3 id="previousName">Nessuna chiamata</h3>
+        <div class="previous-result">
+          <span id="previousStatus">L’ultima operazione apparirà qui.</span>
+          <strong id="previousPrice"></strong>
+        </div>
+        <p id="previousTime" class="previous-time"></p>
+      </aside>
+    </section>
+
+    <section class="teams-section">
+      <div id="shortageBanner" class="shortage-banner hidden" role="status"></div>
+      <div class="section-heading"><h3>Situazione squadre</h3><p>Clicca una squadra oppure usa ← ↑ ↓ →</p></div>
+      <div id="teamsGrid" class="teams-grid"></div>
+    </section>
+  </main>
+
+  <dialog id="settingsDialog" class="modal settings-modal">
+    <form id="settingsForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">CONFIGURAZIONE</p><h2 id="settingsTitle">Nuova asta</h2></div><button id="closeSettingsBtn" class="close-btn" type="button" aria-label="Chiudi">×</button></div>
+      <div class="settings-grid">
+        <section class="settings-block">
+          <h3>Regole</h3>
+          <div class="field-row"><label>Tipo<select id="modeInput"><option value="classic">Normale</option><option value="mantra">Mantra</option></select></label><label>Crediti iniziali<input id="creditsInput" type="number" min="25" value="300"></label></div>
+          <label>Ordine delle chiamate<select id="callModeInput"><option value="role-random">Random per ruolo</option><option value="total-random">Random totale dopo i portieri</option><option value="alphabetical">Alfabetico per ruolo</option></select></label>
+          <div id="alphabetStarts" class="alphabet-starts hidden">
+            <p>Lettera iniziale per ogni ruolo</p>
+            <div class="field-row three"><label>Difensori<input id="alphabetD" type="text" maxlength="1" value="A" pattern="[A-Za-z]"></label><label>Centrocampisti<input id="alphabetC" type="text" maxlength="1" value="A" pattern="[A-Za-z]"></label><label>Attaccanti<input id="alphabetA" type="text" maxlength="1" value="A" pattern="[A-Za-z]"></label></div>
+          </div>
+          <label>Nome lega<input id="leagueNameInput" type="text" maxlength="60" placeholder="La mia lega"></label>
+          <label>Numero squadre<input id="teamCountInput" type="number" min="2" max="30" value="16"></label>
+          <div class="limits-grid">
+            <label>Portieri<input id="limitP" type="number" min="0" value="3"></label>
+            <label>Difensori<input id="limitD" type="number" min="0" value="8"></label>
+            <label>Centrocampisti<input id="limitC" type="number" min="0" value="8"></label>
+            <label>Attaccanti<input id="limitA" type="number" min="0" value="5"></label>
+          </div>
+          <label id="listoneField" class="upload-box">Listone aggiornato `.xlsx`<input id="xlsxInput" type="file" accept=".xlsx,.xls"><span id="fileNameLabel">Scegli il file aggiornato</span></label>
+          <p class="field-hint">Riconosce il foglio “Tutti” e corregge automaticamente il gruppo d’asta dei multiruolo Mantra.</p>
+          <a class="btn btn-ghost official-list-link" href="https://www.fantacalcio.it/quotazioni-fantacalcio" target="_blank" rel="noopener noreferrer">Apri la pagina del listone aggiornato ↗</a>
+          <div id="auctionTools" class="settings-tools hidden">
+            <h3>Strumenti asta</h3>
+            <div class="settings-tools-grid">
+              <button id="shareBtn" class="btn btn-secondary" type="button">Live telefoni</button>
+              <button id="backupBtn" class="btn btn-secondary" type="button">Scarica backup</button>
+              <button id="auditBtn" class="btn btn-secondary" type="button">Registro <b id="auditCount">0</b></button>
+              <button id="editRostersBtn" class="btn btn-secondary" type="button">Modifica rose</button>
+              <button id="pauseBtn" class="btn btn-secondary" type="button"><span id="pauseBtnLabel">Pausa asta</span></button>
+            </div>
+          </div>
+        </section>
+        <section class="settings-block team-settings"><div class="block-title"><h3>Nomi squadre</h3><button id="resetNamesBtn" class="text-btn" type="button">Nomi predefiniti</button></div><div id="teamNamesList" class="team-names-list"></div></section>
+      </div>
+      <p id="settingsError" class="form-error" role="alert"></p>
+      <div class="modal-actions"><button id="cancelSettingsBtn" class="btn btn-ghost" type="button">Annulla</button><button class="btn btn-primary" type="submit">Avvia l’asta</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="rostersDialog" class="modal rosters-modal">
+    <div class="modal-head"><div><p id="rostersEyebrow" class="eyebrow">ROSE LIVE</p><h2 id="rostersTitle">Tutte le squadre</h2><p id="rostersSubtitle" class="modal-subtitle"></p></div><div class="modal-head-actions"><button id="rostersIntegrationBtn" class="btn btn-import">CSV squadra,id,costo</button><button id="closeRostersBtn" class="close-btn" aria-label="Chiudi">×</button></div></div>
+    <div id="rostersGrid" class="rosters-grid"></div>
+  </dialog>
+
+  <dialog id="finishDialog" class="modal finish-modal">
+    <div class="finish-icon">✓</div><p class="eyebrow">ASTA COMPLETATA</p><h2>Rose al completo</h2><p>I dati sono salvati nel browser. Scarica ora il file definitivo e una copia di backup.</p>
+    <div class="finish-actions"><button id="finishJsonBtn" class="btn btn-primary">Scarica archivio JSON</button><button id="finishIntegrationBtn" class="btn btn-import">CSV squadra,id,costo</button><button id="finishXlsxBtn" class="btn btn-secondary">Excel rose completo</button><button id="finishCsvBtn" class="btn btn-secondary">Scarica CSV</button><button id="closeFinishBtn" class="btn btn-ghost">Chiudi</button></div>
+    <p class="integration-note">Il file di integrazione non contiene intestazioni: ogni riga è nel formato <b>squadra,id,costo</b>.</p>
+  </dialog>
+
+  <dialog id="auditDialog" class="modal audit-modal">
+    <div class="modal-head"><div><p class="eyebrow">CRONOLOGIA COMPLETA</p><h2>Registro dell’asta</h2><p class="modal-subtitle">Acquisti, passaggi e correzioni in ordine cronologico.</p></div><button id="closeAuditBtn" class="close-btn" aria-label="Chiudi">×</button></div>
+    <div class="audit-summary"><span>OPERAZIONI <b id="auditTotal">0</b></span><button id="exportAuditBtn" class="btn btn-secondary">Esporta registro CSV</button></div>
+    <div class="audit-table-head"><span>Ora</span><span>Operazione</span><span>Giocatore</span><span>Esito</span><span>Prezzo</span></div>
+    <div id="auditList" class="audit-list"></div>
+  </dialog>
+
+  <dialog id="shareDialog" class="modal share-modal">
+    <div class="modal-head"><div><p class="eyebrow">VISTA TELEFONI</p><h2>Asta live</h2><p class="modal-subtitle">Il link è in sola lettura: il controllo resta sempre su questo computer.</p></div><button id="closeShareBtn" class="close-btn" aria-label="Chiudi">×</button></div>
+    <div class="share-content">
+      <div class="share-status"><span id="shareStatusDot"></span><div><strong id="shareStatusTitle">Sincronizzazione locale</strong><p id="shareStatusText">Pubblica il progetto sul dominio per attivare la vista live.</p></div></div>
+      <label>Link da inviare ai partecipanti<div class="share-link-row"><input id="shareLinkInput" type="text" readonly><button id="copyShareLinkBtn" class="btn btn-primary">Copia link</button></div></label>
+      <div class="share-room">CODICE ASTA <strong id="shareRoomCode">—</strong></div>
+      <p class="share-note">Sul dominio la sincronizzazione parte automaticamente dopo ogni acquisto, passaggio o undo. Nessun partecipante può modificare l’asta.</p>
+    </div>
+  </dialog>
+
+  <dialog id="searchDialog" class="modal search-modal">
+    <div class="modal-head"><div><p class="eyebrow">CHIAMATA MANUALE</p><h2>Cerca giocatore</h2><p id="searchSubtitle" class="modal-subtitle"></p></div><button id="closeSearchBtn" class="close-btn" aria-label="Chiudi">×</button></div>
+    <div class="search-content">
+      <label class="search-field"><span>Nome o squadra reale</span><input id="playerSearchInput" type="search" autocomplete="off" placeholder="Es. Barella o Inter"></label>
+      <label id="searchRoleField" class="search-field hidden"><span>Filtra ruolo</span><select id="playerSearchRole"><option value="">Tutti i ruoli</option><option value="D">Difensori</option><option value="C">Centrocampisti</option><option value="A">Attaccanti</option></select></label>
+      <div class="search-summary"><span id="searchResultCount">0 giocatori</span><small>Sono mostrati solo i giocatori disponibili e compatibili con il turno di chiamata.</small></div>
+      <div id="searchResults" class="search-results"></div>
+    </div>
+  </dialog>
+
+  <dialog id="repairDialog" class="modal repair-modal">
+    <form id="repairForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">MERCATO DI RIPARAZIONE</p><h2>Riparti dalle rose esistenti</h2><p class="modal-subtitle">Carica il CSV squadra,id,costo dell’asta precedente e il listone aggiornato. È supportato anche il backup JSON.</p></div><button id="closeRepairBtn" class="close-btn" type="button">×</button></div>
+      <div class="repair-fields">
+        <label class="upload-box">Rose asta precedente<input id="repairBackupInput" type="file" accept=".csv,.json,text/csv,application/json"><span id="repairBackupLabel">Scegli il CSV o il backup JSON</span></label>
+        <label class="upload-box">Nuovo listone aggiornato<input id="repairListInput" type="file" accept=".xlsx,.xls"><span id="repairListLabel">Scegli il nuovo listone</span></label>
+      </div>
+      <div class="repair-options">
+        <div class="field-row"><label>Modalità<select id="repairModeInput"><option value="classic">Normale</option><option value="mantra">Mantra</option></select></label><label>Crediti iniziali<input id="repairCreditsInput" type="number" min="25" value="300"></label></div>
+        <div class="limits-grid">
+          <label>Portieri<input id="repairLimitP" type="number" min="0" value="3"></label>
+          <label>Difensori<input id="repairLimitD" type="number" min="0" value="8"></label>
+          <label>Centrocampisti<input id="repairLimitC" type="number" min="0" value="8"></label>
+          <label>Attaccanti<input id="repairLimitA" type="number" min="0" value="5"></label>
+        </div>
+        <p class="field-hint">Questi valori servono soltanto con il CSV; usando un JSON vengono recuperati dal backup.</p>
+      </div>
+      <p id="repairError" class="form-error"></p>
+      <div class="modal-actions"><button id="cancelRepairBtn" class="btn btn-ghost" type="button">Annulla</button><button class="btn btn-primary" type="submit">Prepara gli svincoli</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="rosterEditorDialog" class="modal roster-editor-modal">
+    <div class="modal-head"><div><p class="eyebrow">CORREZIONE DATI</p><h2>Modifica rose e prezzi</h2><p class="modal-subtitle">Puoi correggere squadra e costo oppure svincolare un calciatore. Ogni modifica resta nel registro.</p></div><button id="closeRosterEditorBtn" class="close-btn">×</button></div>
+    <div class="editor-toolbar"><label>Squadra<select id="editorTeamFilter"></select></label><label>Cerca<input id="editorSearch" type="search" placeholder="Nome giocatore"></label></div>
+    <div id="rosterEditorList" class="roster-editor-list"></div>
+  </dialog>
+
+  <div id="pauseOverlay" class="pause-overlay hidden"><div><p>ASTA IN PAUSA</p><strong id="pauseTimer">00:00:00</strong><button id="resumeAuctionBtn" class="btn btn-primary">Riprendi asta</button></div></div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="vendor/xlsx.full.min.js?v=10"></script>
+  <script src="auction-engine.js?v=16"></script>
+  <script src="config.js?v=10"></script>
+  <script src="app.js?v=18"></script>
+</body>
+</html>

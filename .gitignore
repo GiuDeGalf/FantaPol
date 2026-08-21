@@ -1,0 +1,25 @@
+# Sistema operativo ed editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# File locali e dati d'asta
+*.xlsx
+*.xls
+*.csv
+*.json
+!package.json
+*.log
+.fantapol-*
+
+# Dati pubblicati dal server live
+sync-data/*.tmp
+sync-data/*.json
+deploy/fantapol/sync-data/*.tmp
+deploy/fantapol/sync-data/*.json
+
+# Python e Node
+__pycache__/
+*.py[cod]
+node_modules/

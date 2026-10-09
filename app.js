@@ -656,7 +656,10 @@ function isPublishedController() {
 }
 
 function controllerUrl() {
-  const url = new URL("index.html", location.href);
+  const onlineBase = !isPublishedController() && LIVE_CONFIG.viewerBaseUrl
+    ? LIVE_CONFIG.viewerBaseUrl
+    : location.href;
+  const url = new URL("index.html", onlineBase);
   url.search = "";
   url.searchParams.set("room", engine.state.sharing.room);
   url.hash = new URLSearchParams({ control: engine.state.sharing.token }).toString();

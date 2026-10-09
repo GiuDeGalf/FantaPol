@@ -60,17 +60,17 @@ if ($method === 'GET') {
 if ($method !== 'POST') respond(405, ['error' => 'Metodo non consentito']);
 
 $length = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0);
-if ($length > 1_500_000) respond(413, ['error' => 'Dati troppo grandi']);
+if ($length > 8_000_000) respond(413, ['error' => 'Dati troppo grandi']);
 $input = json_decode((string) file_get_contents('php://input'), true);
 if (!is_array($input)) respond(400, ['error' => 'JSON non valido']);
 
 $room = valid_room($input['room'] ?? null);
 $token = $input['token'] ?? null;
-$state = $input['state'] ?? null;
-if (!is_string($token) || strlen($token) < 32 || !is_array($state)) respond(400, ['error' => 'Dati mancanti']);
+if (!is_string($token) || strlen($token) < 32) respond(400, ['error' => 'Dati mancanti']);
 
 $file = $dataDir . DIRECTORY_SEPARATOR . hash('sha256', $room) . '.json';
 $tokenHash = hash('sha256', $token);
+$existing = null;
 if (is_file($file)) {
     $existing = json_decode((string) file_get_contents($file), true);
     if (!is_array($existing) || !isset($existing['tokenHash']) || !hash_equals((string) $existing['tokenHash'], $tokenHash)) {
@@ -78,9 +78,30 @@ if (is_file($file)) {
     }
 }
 
+$action = is_string($input['action'] ?? null) ? $input['action'] : 'save';
+if ($action === 'load') {
+    if (!is_array($existing) || !isset($existing['fullState']) || !is_array($existing['fullState'])) {
+        respond(404, ['error' => 'Salvataggio online non ancora disponibile']);
+    }
+    respond(200, ['fullState' => $existing['fullState']]);
+}
+
+$state = $input['state'] ?? null;
+$fullState = $input['fullState'] ?? null;
+if (!is_array($state) || !is_array($fullState)) respond(400, ['error' => 'Dati asta mancanti']);
+$incomingUpdatedAt = is_string($fullState['updatedAt'] ?? null) ? $fullState['updatedAt'] : '';
+$storedUpdatedAt = is_array($existing['fullState'] ?? null) && is_string($existing['fullState']['updatedAt'] ?? null)
+    ? $existing['fullState']['updatedAt']
+    : '';
+if ($storedUpdatedAt !== '' && ($incomingUpdatedAt === '' || strcmp($incomingUpdatedAt, $storedUpdatedAt) < 0)) {
+    respond(409, ['error' => 'Lo stato online è più recente. Ricarica la regia.']);
+}
+
 $payload = json_encode([
     'tokenHash' => $tokenHash,
     'state' => $state,
+    'fullState' => $fullState,
+    'savedAt' => gmdate('c'),
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 if ($payload === false) respond(500, ['error' => 'Impossibile serializzare i dati']);
 
@@ -90,4 +111,4 @@ if (file_put_contents($temporary, $payload, LOCK_EX) === false || !rename($tempo
     respond(500, ['error' => 'Impossibile salvare i dati']);
 }
 
-respond(200, ['ok' => true, 'updatedAt' => $state['updatedAt'] ?? null]);
+respond(200, ['ok' => true, 'updatedAt' => $fullState['updatedAt'] ?? null]);

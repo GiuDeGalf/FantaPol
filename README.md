@@ -1,8 +1,8 @@
 # FantaPol
 
-FantaPol è una regia web locale per aste di fantacalcio. Il banditore controlla tutto dal computer; una vista pubblica opzionale permette ai partecipanti di seguire l’asta da telefono o tablet.
+FantaPol è una regia web per aste di fantacalcio. Può funzionare in locale oppure interamente online: il banditore controlla l’asta dal browser e i partecipanti la seguono da telefono o tablet.
 
-Il progetto non richiede database, account o servizi esterni. I dati dell’asta restano nel browser del banditore e possono essere esportati in JSON, Excel e CSV.
+Il progetto non richiede database, account o servizi esterni. In modalità online usa soltanto PHP e file JSON protetti sul proprio hosting. I dati possono essere esportati in JSON, Excel e CSV.
 
 ## Funzioni principali
 
@@ -14,6 +14,7 @@ Il progetto non richiede database, account o servizi esterni. I dati dell’asta
 - modifica successiva di squadra e prezzo;
 - asta di riparazione da CSV o backup JSON;
 - salvataggio automatico e ripristino;
+- regia completa online con ripristino da un altro dispositivo;
 - vista live in sola lettura per telefoni;
 - esportazione CSV nel formato `squadra,id,costo`.
 
@@ -25,7 +26,7 @@ In Mantra, il gruppo d’asta viene ricavato dal ruolo preciso. In particolare `
 - Python 3.9 o successivo per l’avvio locale;
 - un listone Excel compatibile, selezionato dall’utente.
 
-Node.js è facoltativo e serve soltanto per eseguire i test. PHP 8.1+ è necessario soltanto se si pubblica la vista telefoni sul proprio dominio.
+Node.js è facoltativo e serve soltanto per eseguire i test. PHP 8.1+ è necessario soltanto per pubblicare la regia e la vista telefoni sul proprio dominio.
 
 ## Avvio
 
@@ -80,14 +81,21 @@ Lo stato viene salvato automaticamente nel `localStorage` del browser. Questo no
 
 Non usare la navigazione privata e non cancellare i dati del browser durante un’asta.
 
-## Vista live sui telefoni
+## Regia completa online e vista telefoni
 
-La vista live è facoltativa. Il banditore continua a lavorare su `127.0.0.1`; il dominio riceve soltanto lo stato pubblico necessario ai partecipanti.
+La pubblicazione online è facoltativa. Sul dominio sono disponibili due accessi separati:
+
+- `index.html`: regia completa, inclusi avvio, riparazione, caricamento file, assegnazioni e modifiche;
+- `viewer.html`: vista pubblica in sola lettura per i partecipanti.
 
 1. Carica sul tuo hosting il contenuto di [`deploy/fantapol`](deploy/fantapol).
 2. Segui [le istruzioni di pubblicazione](deploy/README.md).
-3. Inserisci gli URL del tuo dominio in `config.js`.
-4. Riavvia FantaPol e usa **Impostazioni → Live telefoni**.
+3. Apri `https://example.com/fantapol/` e avvia l’asta.
+4. Da **Impostazioni → Live telefoni** copia il link pubblico o il link segreto della regia.
+
+Quando l’applicazione è aperta direttamente sul dominio non serve configurare gli URL: FantaPol rileva automaticamente `sync.php`. Il link segreto permette di riprendere lo stato completo da un altro dispositivo e non deve essere inviato ai partecipanti.
+
+La configurazione seguente serve solo quando la regia gira in locale ma pubblica il viewer su un dominio:
 
 Esempio:
 
@@ -123,8 +131,9 @@ npm run check
 
 - Non committare listoni, CSV, backup JSON o contenuti di `sync-data`.
 - Elimina `test.php` dal dominio dopo la verifica iniziale.
-- Usa HTTPS per la vista live.
-- Il link dei partecipanti è in sola lettura; il token di scrittura resta nel browser del banditore.
+- Usa HTTPS per la regia e la vista live.
+- Il link dei partecipanti è in sola lettura.
+- Il link segreto della regia autorizza ogni modifica: condividilo solo con il banditore e rigeneralo avviando una nuova asta se viene esposto.
 
 Consulta [SECURITY.md](SECURITY.md) per le segnalazioni.
 
